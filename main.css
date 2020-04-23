@@ -6,3 +6,13 @@
   * https://github.com/andreacardybailey/responsive_example/blob/master/styles/responsive-base.css 
   *
 */
+
+h1 {
+    background-color: grey;
+
+}
+
+div {
+    background-color: grey;
+    margin-bottom: 14px;
+}
