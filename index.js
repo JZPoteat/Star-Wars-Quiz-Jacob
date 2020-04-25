@@ -107,6 +107,7 @@ function handleSubmitButton() {
   $('main').on('submit', '.answer-form', event => { 
     event.preventDefault();
     checkAnswer();
+    console.log(store.score);
     store.questionNumber++;
     //1. get the user's answer
     //2. Compare user's answer to correct answer
@@ -184,7 +185,8 @@ function checkAnswer() {
   //the score accordingly
   console.log('`checkAnswer` ran');
   let userAnswer = $(".answer:checked").val();
-  let currentCorrectAnswer = store.questions;
+  let answerIndex = store.questionNumber;
+  let currentCorrectAnswer = store.questions[answerIndex].correctAnswer;
   if(userAnswer === currentCorrectAnswer) {
     store.score++;
   }
@@ -197,8 +199,8 @@ function provideFeedback() {
   let userAnswer = $(".answer:checked").val();
   let previousAnswerIndex = store.questionNumber - 1;
   let currentCorrectAnswer = store.questions[previousAnswerIndex].correctAnswer;
-  console.log(userAnswer);
-  console.log(store.questionNumber);  
+  //console.log(userAnswer);
+  //console.log(store.questionNumber);  
   if (userAnswer === currentCorrectAnswer) {
     return 'Correct!';
   }
