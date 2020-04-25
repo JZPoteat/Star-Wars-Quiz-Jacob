@@ -155,7 +155,7 @@ function generateQuestionAnswerPage() {
   possibleAnswers.forEach(choice =>
     {
         answersHTML += `<div>
-            <input class="answer" type="radio" name='answers' value='${choice}'>
+            <input required class="answer" type="radio" name='answers' value='${choice}'>
             <label for='${choice}'>${choice}</label>
         </div>`;
     })
