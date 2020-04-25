@@ -6,7 +6,7 @@ const store = {
   // 5 or more questions are required
   questions: [
     {
-      question: 'Which Star Wars film was the best one?',
+      question: 'Which Star Wars film was the best?',
       answers: [
         'Clone Wars',
         'Rogue One',
@@ -49,20 +49,20 @@ const store = {
       correctAnswer: 'Kybar Crystal'
     },
     {
-        question: 'Whose DNA is used to create the Clones Troopers?',
-        answers: [
-          'Boba Fett',
-          'Jango Fett',
-          'Captain Phasma',
-          'Finn'
-        ],
+      question: 'Whose DNA is used to create the Clones Troopers?',
+      answers: [
+        'Boba Fett',
+        'Jango Fett',
+        'Captain Phasma',
+        'Finn'
+      ],
         
-        correctAnswer: 'Jango Fett'
-      }
+      correctAnswer: 'Jango Fett'
+    }
 
   ],
   quizStarted: false,
-  questionNumber: 0,
+  questionNumber: -1,
   //questionNumber: 0 => start page
   //questionNumber: 1-5 => Quiz
   //questionNumber: 6 => end page
@@ -83,51 +83,128 @@ const store = {
 function renderQuizApp() {
   //render the QuizApp in the DOM
   console.log('`renderQuizApp` ran');
-  const quizForm = '<p>apples</p>';
-  $('main').html(quizForm);
-
+  if(store.questionNumber === -1) {
+    $('main').html(generateStartPage());
+  }
+  else if(store.questionNumber >= 0 && store.questionNumber < store.questions.length) {
+    $('main').html(generateQuestionAnswerPage());
+  }
+  else if (store.questionNumber === store.questions.length) {
+    $('main').html(generateResultsPage());
+  }
 }  
 
 
-function handleSubmitAnswer() {
-  //function will contain event functions that we 
-  //need to access when the user submits an answer
-  console.log('`handleSubmitAnswer` ran');
+function handleStartButton() {
+  $('main').on('click', '.start-button', event => {
+    store.questionNumber++;
+    console.log('start button clicked');
+    renderQuizApp();
+  });
+}
+
+function handleSubmitButton() {
+  $('main').on('submit', '.answer-form', event => { 
+    event.preventDefault();
+    checkAnswer();
+    store.questionNumber++;
+    //1. get the user's answer
+    //2. Compare user's answer to correct answer
+    //3. Update the store to reflect if they got it right
+            //update questionNumber and score
+    renderQuizApp(); 
+
+  });
+}
+
+function handleResetButton() {
+    
+    $('main').on('click', '.reset-button', event => {
+        console.log('handlResetButton ran');
+        //reset the questionNumber
+        //reset the score
+        //reload the page.
+        store.questionNumber = -1;
+        console.log(store.questionNumber);
+        store.score = 0;
+        console.log(store.score);
+        renderQuizApp();
+    });
+}
+
+
+function generateStartPage() {
+  console.log('generateStartPage runs');
+  return `<h1>Welcome to our Star Wars quiz!</h1>
+            <p>May the Force be with you</p>
+            <button type="button" class="start-button">Begin!</button> 
+    `;
+}
+
+function generateQuestionAnswerPage() {
+  console.log('generateQuestionAnswerPage runs');
   let numberOfQuestions = store.questions.length;
-  console.log(numberOfQuestions);
-  if(store.questionNumber === 0) {
-    //this is the start page
-
+  let possibleAnswers = store.questions[store.questionNumber].answers;
+  let answersHTML = '';
+  let feedback = `<h2></h2>`;
+  if(store.questionNumber !== 0) {
+    feedback = `<h2>${provideFeedback()}</h2>
+                <h3>Your current score is ${store.score} out of ${numberOfQuestions}</h3>`;
   }
-  else if(store.questionNumber > 0 && store.questionNumber <= numberOfQuestions) {
-    //this is the quiz section
-  }
-
-  else if(store.questionNumber === numberOfQuestions + 1) {
-    //This is the results page
-  }
-  else {
-    //This is where we restart the quiz
-  }
+  possibleAnswers.forEach(choice =>
+    {
+        answersHTML += `<div>
+            <input class="answer" type="radio" name='answers' value='${choice}'>
+            <label for='${choice}'>${choice}</label>
+        </div>`;
+    })
+  let currentScore = `Your current score is ${store.score} out of ${numberOfQuestions}`;
+  return `
+  ${feedback}
+  <section id="current-question">${store.questionNumber + 1}. ${store.questions[store.questionNumber].question}
+  </section>
+  <form class ="answer-form">
+    <section>${answersHTML}</section>
+    <button type="submit">Submit</button>
+  </form>`;
 }
 
-function updateDisplay() {
-  //function will update what is being rendered
-  //in the DOM
-  console.log('`updateDisplay` ran');
-}
 
+
+function generateResultsPage() {
+  console.log('generateResultsPage runs');
+  return `
+    <p>Congrats! You got ${store.score} out of ${store.questions.length} correct!</p>
+    <button type="button" class="reset-button">Restart Quiz
+    </button> `;
+}
 function checkAnswer() {
   //Function will check if the answer the user 
   //submits matches the correct answer, and update
   //the score accordingly
   console.log('`checkAnswer` ran');
+  let userAnswer = $(".answer:checked").val();
+  let currentCorrectAnswer = store.questions;
+  if(userAnswer === currentCorrectAnswer) {
+    store.score++;
+  }
 }
 
 function provideFeedback() {
   //Returns a string that tells the user if they 
   //answered correctly or displays the correct answer
   //if answered incorrectly
+  let userAnswer = $(".answer:checked").val();
+  let previousAnswerIndex = store.questionNumber - 1;
+  let currentCorrectAnswer = store.questions[previousAnswerIndex].correctAnswer;
+  console.log(userAnswer);
+  console.log(store.questionNumber);  
+  if (userAnswer === currentCorrectAnswer) {
+    return 'Correct!';
+  }
+  else {
+    return `Incorrect.  The correct answer is ${currentCorrectAnswer}.`
+  }
   console.log('`provideFeedback` ran');
 }
 
@@ -156,15 +233,9 @@ function updateQuestionsAnswers() {
 function handleQuizApp() {
   //This function is calling the event functions
   renderQuizApp();
-  handleSubmitAnswer();
-  updateDisplay();
-  checkAnswer();
-  provideFeedback();
-  displayScore();
-  updateImage();
-  updateQuestionsAnswers();
-
-
+  handleStartButton();
+  handleSubmitButton();
+  handleResetButton();
 }
 
 
