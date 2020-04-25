@@ -138,7 +138,7 @@ function generateStartPage() {
   console.log('generateStartPage runs');
   return `<h1>Welcome to our Star Wars quiz!</h1>
             <p>May the Force be with you</p>
-            <button type="button" class="start-button">Begin!</button> 
+            <button type="button" class="start-button">Begin!</button><img src="quizImage-1.jpg" alt="Italian Trulli">
     `;
 }
 
@@ -167,7 +167,7 @@ function generateQuestionAnswerPage() {
   <form class ="answer-form">
     <section>${answersHTML}</section>
     <button type="submit">Submit</button>
-  </form>`;
+  </form><img src="quizImage${store.questionNumber}.jpg" alt="group shot">`;
 }
 
 
@@ -177,7 +177,7 @@ function generateResultsPage() {
   return `
     <p>Congrats! You got ${store.score} out of ${store.questions.length} correct!</p>
     <button type="button" class="reset-button">Restart Quiz
-    </button> `;
+    </button> <img src="resultPageImage.jpg" alt="Italian Trulli">`;
 }
 function checkAnswer() {
   //Function will check if the answer the user 
