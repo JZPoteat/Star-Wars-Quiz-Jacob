@@ -49,7 +49,7 @@ const store = {
       correctAnswer: 'Kybar Crystal'
     },
     {
-      question: 'Whose DNA is used to create the Clones Troopers?',
+      question: 'Whose DNA is used to create the Clone Troopers?',
       answers: [
         'Boba Fett',
         'Jango Fett',
@@ -58,7 +58,8 @@ const store = {
       ],
         
       correctAnswer: 'Jango Fett'
-    }
+    },
+    
 
   ],
   quizStarted: false,

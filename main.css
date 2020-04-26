@@ -8,12 +8,41 @@
 */
 
 h1 {
-    background-color: grey;
+  font-size: calc(1em + 1vm);
+  text-align: center;
 
 }
 
+body {
+  color: black;
+  background-color: black;
+}
+
+header {
+  font-size: calc(1.25em + 1vw);
+  text-align: center;
+  color: yellow;
+  background-color: black;
+
+}
+
+main {
+  font-size: calc(.75em + 1vw);
+  text-align: center;
+  color: yellow;
+  background-color: black;
+
+}
+
+p {
+  font-size: calc(.75em + 1vw);
+  color: yellow;
+  background-color: black;
+}
+
+
 div {
-    background-color: grey;
-    margin-bottom: 14px;
+  
+  margin-bottom: 14px;
 }
 
