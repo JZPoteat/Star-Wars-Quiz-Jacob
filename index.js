@@ -1,12 +1,11 @@
-/**
- * Example store structure
- */
+/* eslint-disable indent */
+
 'use strict';
 const store = {
   // 5 or more questions are required
   questions: [
     {
-      question: 'Which Star Wars film was the best?',
+      question: 'Which Star Wars film was the best? (Hint: There is a correct answer)',
       answers: [
         'Clone Wars',
         'Rogue One',
@@ -27,7 +26,7 @@ const store = {
       correctAnswer: 'Anakin'
     },
     {
-      question: 'Who are the only two characters to appear in every Star Wars movie episodes?',
+      question: 'Who are the only two characters to appear in all nine of the main Star Wars movies?',
       answers: [
         'C3PO and R2D2',
         'Han Solo and Chewbacca',
@@ -68,23 +67,13 @@ const store = {
   //questionNumber: -1 => start page
   //questionNumber: 0-4 => Quiz
   //questionNumber: 5 => end page
-  //after questionNumber: 5 => reset questionNumber and
-  //score to -1.
+  //after questionNumber: 5 => reset questionNumber to -1 and score to 0.
   score: 0
 };
 
-//Function that handles submitting forms
-//changes the display in the DOM
-//Checks multiple choice answer
-//provide feedback on the answer
-//Displays current score
-//update image
-//update question and answers
-//render function
-
 function renderQuizApp() {
   //render the QuizApp in the DOM
-  console.log('`renderQuizApp` ran');
+  //console.log('`renderQuizApp` ran');
   if(store.questionNumber === -1) {
     $('main').html(generateStartPage());
   }
@@ -96,68 +85,35 @@ function renderQuizApp() {
   }
 }  
 
-function userAnswerSummary () {
-  let html = '';
-  let i = 0;
-  store.questions.forEach(item => {
-    html += `<p>${i + 1}.  You selected: ${store.selectedAnswers[i]}. <br>The correct answer:  ${item.correctAnswer}.</p>`;
-    i++;
-  });
-  return html;
-}
-
-function handleStartButton() {
-  $('main').on('click', '.start-button', event => {
-    store.questionNumber++;
-    console.log('start button clicked');
-    renderQuizApp();
-  });
-}
-
-function handleSubmitButton() {
-  $('main').on('submit', '.answer-form', event => { 
-    event.preventDefault();
-    checkAnswer();
-    console.log(store.score);
-    store.questionNumber++;
-    //1. get the user's answer
-    //2. Compare user's answer to correct answer
-    //3. Update the store to reflect if they got it right
-    //update questionNumber and score
-    renderQuizApp(); 
-
-  });
-}
-
-function handleResetButton() {
-    
-  $('main').on('click', '.reset-button', event => {
-    console.log('handlResetButton ran');
-    //reset the questionNumber
-    //reset the score
-    //reload the page.
-    //reset the selectedAnswers array
-    //render the quiz app
-    store.questionNumber = -1;
-    store.score = 0;
-    store.selectedAnswers = [];
-    console.log(store.score);
-    renderQuizApp();
-  });
-}
-
-
 function generateStartPage() {
-  console.log('generateStartPage runs');
-  return `<h1>Welcome to our Star Wars quiz!</h1>
+  //This function provides the structure of the start page.  This page includes:
+      //Welcome statement
+      //Starting image
+      //Start button that takes the user into the quiz
+  //console.log('generateStartPage runs');
+  return `<h1>Welcome to our quiz, young Padawan.<br>For now, you have the high ground...</h1>
             <img src="quizImage-1.jpg" alt="Darth Nihilus">
             <p>May the Force be with you</p>
-            <button type="button" class="start-button">Begin!</button>
+            <button type="button" class="start-button">Do it!</button>
     `;
 }
 
+function handleStartButton() {
+  //This function handles the logic required when the user clicks the start button at the beginning of the quiz.
+  //The function increments the question number and then renders the quiz app.
+  $('main').on('click', '.start-button', event => {
+    store.questionNumber++;
+    //console.log('start button clicked');
+    renderQuizApp();
+  });
+}
+
 function generateQuestionAnswerPage() {
-  console.log('generateQuestionAnswerPage runs');
+  //This function generates the structure of the quiz questions.  The page includes:
+    //Current feedback on the user's current score
+    //Image that changes with each question
+    //One question with four multiple choice answers and a submit button.
+  //console.log('generateQuestionAnswerPage runs');
   let numberOfQuestions = store.questions.length;
   let possibleAnswers = store.questions[store.questionNumber].answers;
   let answersHTML = '';
@@ -174,34 +130,51 @@ function generateQuestionAnswerPage() {
         </div>`;
   });
   let currentScore = `Your current score is ${store.score} out of ${numberOfQuestions}`;
-  console.log(store.imageAlts[store.questionNumber]);
+  //console.log(store.imageAlts[store.questionNumber]);
   return `
   ${feedback}
   <img src="quizImage${store.questionNumber}.jpg" alt="${store.imageAlts[store.questionNumber]}">
   <section id="current-question">${store.questionNumber + 1}. ${store.questions[store.questionNumber].question}
-  </section>
+  </section><br>
   <form class ="answer-form">
     <section>${answersHTML}</section>
     <button type="submit">Submit</button>
   </form>`;
 }
 
-
-
-function generateResultsPage() {
-  console.log('generateResultsPage runs');
-  let summary = userAnswerSummary();
-  return `
-    <p>Congrats! You got ${store.score} out of ${store.questions.length} correct!</p>
-    <img src="resultPageImage.jpg" alt="Mandalore the Ultimate">
-    ${summary}<button type="button" class="reset-button">Restart Quiz
-    </button>`;
+function provideFeedback() {
+  //Returns a string that tells the user if they answered correctly or displays the correct answer if answered incorrectly
+  let userAnswer = $(".answer:checked").val();
+  let previousAnswerIndex = store.questionNumber - 1;
+  let currentCorrectAnswer = store.questions[previousAnswerIndex].correctAnswer; 
+  if (userAnswer === currentCorrectAnswer) {
+    return `Correct! Don't get cocky, kid.`;
+  }
+  else {
+    return `The greatest teacher, failure is. The correct answer is ${currentCorrectAnswer}.`;
+  }
+  console.log('`provideFeedback` ran');
 }
+
+function handleSubmitButton() {
+  //This function handles when the user clicks the submit button to move onto the next quiz question.  In order to do so, the function must:  
+    //1. get the user's answer
+    //2. Compare user's answer to correct answer
+    //3. Update the store to reflect if they got it right
+    //update questionNumber and score
+  $('main').on('submit', '.answer-form', event => { 
+    event.preventDefault();
+    checkAnswer();
+    //console.log(store.score);
+    store.questionNumber++;
+    renderQuizApp(); 
+
+  });
+}
+
 function checkAnswer() {
-  //Function will check if the answer the user 
-  //submits matches the correct answer, and update
-  //the score accordingly
-  console.log('`checkAnswer` ran');
+  //Function will check if the answer the user submits matches the correct answer, and update the score accordingly
+  //console.log('`checkAnswer` ran');
   let userAnswer = $(".answer:checked").val();
   store.selectedAnswers.push(userAnswer);
   let answerIndex = store.questionNumber;
@@ -211,24 +184,44 @@ function checkAnswer() {
   }
 }
 
-function provideFeedback() {
-  //Returns a string that tells the user if they 
-  //answered correctly or displays the correct answer
-  //if answered incorrectly
-  let userAnswer = $(".answer:checked").val();
-  let previousAnswerIndex = store.questionNumber - 1;
-  let currentCorrectAnswer = store.questions[previousAnswerIndex].correctAnswer;
-  //console.log(userAnswer);
-  //console.log(store.questionNumber);  
-  if (userAnswer === currentCorrectAnswer) {
-    return 'Correct!';
-  }
-  else {
-    return `Incorrect.  The correct answer is ${currentCorrectAnswer}.`
-  }
-  console.log('`provideFeedback` ran');
+function generateResultsPage() {
+  //This function generates a results page that includes a user answer summary, image, and restart button
+  //console.log('generateResultsPage runs');
+  let summary = userAnswerSummary();
+  return `
+    <p>Congrats! You got ${store.score} out of ${store.questions.length} correct!</p>
+    <img src="resultPageImage.jpg" alt="Mandalore the Ultimate">
+    ${summary}<button type="button" class="reset-button">Try again, you may...
+    </button>`;
 }
 
+function userAnswerSummary () {
+  //This function provides a summary of user answers in the quiz compared to the correct answers for each question
+  let html = '';
+  let i = 0;
+  store.questions.forEach(item => {
+    html += `<p>${i + 1}.  You selected: ${store.selectedAnswers[i]}. <br>The correct answer:  ${item.correctAnswer}.</p>`;
+    i++;
+  });
+  return html;
+}
+
+function handleResetButton() {
+  //This function handles the logic required to reset the quiz.  To do so, the function must:
+    //reset the questionNumber
+    //reset the score
+    //reload the page.
+    //reset the selectedAnswers array
+    //render the quiz app
+  $('main').on('click', '.reset-button', event => {
+    //console.log('handlResetButton ran');
+    store.questionNumber = -1;
+    store.score = 0;
+    store.selectedAnswers = [];
+    //console.log(store.score);
+    renderQuizApp();
+  });
+}
 
 function handleQuizApp() {
   //This function is calling the event functions
