@@ -8,7 +8,7 @@
 */
 
 h1 {
-  font-size: calc(1em + 1vm);
+  font-size: calc(1em + 1vw);
   text-align: center;
 
 }
